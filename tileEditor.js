@@ -3,7 +3,7 @@ var tinyMapEditor = (function() {
         doc = document,
         pal = doc.getElementById('palette').getContext('2d'),
         map = doc.getElementById('tileEditor').getContext('2d'),
-        width = 10,
+        width = 8,
         height = 10,
         tileSize = 32,
         srcTile = 0,
@@ -34,6 +34,8 @@ var tinyMapEditor = (function() {
                 destTile = this.getTile(e);
                 map.clearRect(destTile.row * tileSize, destTile.col * tileSize, tileSize, tileSize);
                 map.drawImage(sprite, srcTile.row * tileSize, srcTile.col * tileSize, tileSize, tileSize, destTile.row * tileSize, destTile.col * tileSize, tileSize, tileSize);
+
+                tiles[destTile.col][destTile.row] = srcTile.row + srcTile.col * (sprite.width / tileSize);
             }
         },
 
@@ -70,6 +72,7 @@ var tinyMapEditor = (function() {
                 } else if (e.target.id === 'tileEditor' && !srcTile) {
                     destTile = this.getTile(e);
                     map.clearRect(destTile.row * tileSize, destTile.col * tileSize, tileSize, tileSize);
+                    tiles[destTile.col][destTile.row] = -1;
                 }
             }
         },
@@ -104,18 +107,18 @@ var tinyMapEditor = (function() {
                     len,
                     x, y, z;
 
-                tiles = []; // graphical tiles (not currently needed, can be used to create standard tile map)
+                // tiles = []; // graphical tiles (not currently needed, can be used to create standard tile map)
                 alpha = []; // collision map
 
                 for (x = 0; x < width; x++) { // tiles across
-                    tiles[x] = [];
+                    // tiles[x] = [];
                     alpha[x] = [];
 
                     for (y = 0; y < height; y++) { // tiles down
                         pixels = map.getImageData(x * tileSize, y * tileSize, tileSize, tileSize);
                         len = pixels.data.length;
 
-                        tiles[x][y] = pixels; // store ALL tile data
+                        // tiles[x][y] = pixels; // store ALL tile data
                         alpha[x][y] = [];
 
                         for (z = 0; z < len; z += 4) {
@@ -131,13 +134,13 @@ var tinyMapEditor = (function() {
                             alpha[x][y] = 0;
                         } else { // partial alpha, build pixel map
                             alpha[x][y] = this.sortPartial(alpha[x][y]);
-                            tiles[x][y] = pixels; // (temporarily) used for drawing map
+                            // tiles[x][y] = pixels; // (temporarily) used for drawing map
                         }
                     }
                 }
 
                 this.outputJSON();
-                this.drawMap();
+                // this.drawMap();
             }
         },
 
@@ -174,7 +177,10 @@ var tinyMapEditor = (function() {
             // output = (output.split('],'));
             // output = output.concat('],');
 
-            output = JSON.stringify(alpha);
+            output = JSON.stringify(tiles)
+                         .replace(/\[\[/, '[\n  [')
+                         .replace(/\]\]/, ']\n]')
+                         .replace(/,\[/g, ',\n  [');
             doc.getElementsByTagName('textarea')[0].value = output;
         },
 
@@ -229,6 +235,12 @@ var tinyMapEditor = (function() {
             map.canvas.width = width * tileSize;
             map.canvas.height = height * tileSize;
             this.drawTool();
+            tiles = Array.apply(null, Array(height)).map(function() { return []; });
+            for (i = 0; i < height; i++) {
+              for (j = 0; j < width; j++) {
+                tiles[i][j] = -1;
+              }
+            }
         },
 
         destroy : function() {
@@ -236,6 +248,7 @@ var tinyMapEditor = (function() {
             alpha = [];
         }
     };
+
 
 
 
