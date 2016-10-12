@@ -43,5 +43,15 @@ input[type=number] {
 #layers li p { margin: 5px; padding: 5px; border: 1px solid #bbb }
 
 /*************************************** Output */
-output { display: block; margin: 0 auto; padding-right: 250px; text-align: center; z-index: 1 }
-textarea { width: 400px; height: 200px; margin: 0; font-family: monospace }
+output {
+  display: block;
+  margin: 10px;
+  padding-right: 250px;
+  z-index: 1;
+}
+textarea {
+  width: 400px;
+  height: 200px;
+  margin: 0;
+  font-family: monospace;
+}
