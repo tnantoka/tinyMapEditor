@@ -74,6 +74,26 @@
             }
         },
 
+        loadMap : function(e) {
+            if (e.target.id === 'load') {
+              output = doc.getElementsByTagName('textarea')[0].value;
+              tiles = JSON.parse(output);
+
+              var i, j;
+              for (i = 0; i < height; i++) {
+                for (j = 0; j < width; j++) {
+                  var index = tiles[i][j];
+                  map.clearRect(j * tileSize, i * tileSize, tileSize, tileSize);
+                  if (index > 0) {
+                    var row = index % (sprite.width / tileSize);
+                    var col = sprite.height / tileSize - Math.floor(index / (sprite.width / tileSize)) - 1; 
+                    map.drawImage(sprite, row * tileSize, col * tileSize, tileSize, tileSize, j * tileSize, i * tileSize, tileSize, tileSize);
+                  }
+                }
+              }
+            }
+        },
+
         clearMap : function(e) {
             if (e.target.id === 'clear') {
                 map.clearRect(0, 0, map.canvas.width, map.canvas.height);
@@ -181,6 +201,7 @@
                 _this.drawTool();
                 _this.clearMap(e);
                 _this.buildMap(e);
+                _this.loadMap(e);
             }, false);
 
 
@@ -218,6 +239,7 @@
             map.canvas.height = height * tileSize;
             this.drawTool();
             tiles = Array.apply(null, Array(height)).map(function() { return []; });
+            var i, j;
             for (i = 0; i < height; i++) {
               for (j = 0; j < width; j++) {
                 tiles[i][j] = -1;
