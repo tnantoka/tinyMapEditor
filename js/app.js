@@ -190,7 +190,8 @@
             output = JSON.stringify(tiles)
                          .replace(/\[\[/, '[\n  [')
                          .replace(/\]\]/, ']\n]')
-                         .replace(/,\[/g, ',\n  [');
+                         .replace(/,\[/g, ',\n  [')
+                         .replace(/,/g, ', ');
             doc.getElementsByTagName('textarea')[0].value = output;
         },
 
