@@ -17,7 +17,7 @@
                 map.clearRect(destTile.row * tileSize, destTile.col * tileSize, tileSize, tileSize);
                 map.drawImage(sprite, srcTile.row * tileSize, srcTile.col * tileSize, tileSize, tileSize, destTile.row * tileSize, destTile.col * tileSize, tileSize, tileSize);
 
-                tiles[destTile.col][destTile.row] = srcTile.row + srcTile.col * (sprite.width / tileSize);
+                tiles[destTile.col][destTile.row] = srcTile.row + (sprite.height / tileSize - srcTile.col - 1) * (sprite.width / tileSize);
             }
         },
 
