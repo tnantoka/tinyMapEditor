@@ -22,7 +22,10 @@ var tinyMapEditor = (function() {
                 var row = e.layerX / tileSize | 0,
                     col = e.layerY / tileSize | 0;
 
-                if (e.target.id === 'palette') srcTile = { row : row, col : col };
+                if (e.target.id === 'palette') {
+                  srcTile = { row : row, col : col };
+                  doc.getElementById('index').innerHTML = this.getIndex();
+                }
                 return { row : row, col : col };
             }
         },
@@ -35,8 +38,12 @@ var tinyMapEditor = (function() {
                 map.clearRect(destTile.row * tileSize, destTile.col * tileSize, tileSize, tileSize);
                 map.drawImage(sprite, srcTile.row * tileSize, srcTile.col * tileSize, tileSize, tileSize, destTile.row * tileSize, destTile.col * tileSize, tileSize, tileSize);
 
-                tiles[destTile.col][destTile.row] = srcTile.row + (sprite.height / tileSize - srcTile.col - 1) * (sprite.width / tileSize);
+                tiles[destTile.col][destTile.row] = this.getIndex();
             }
+        },
+
+        getIndex : function() {
+          return srcTile.row + (sprite.height / tileSize - srcTile.col - 1) * (sprite.width / tileSize);
         },
 
         drawTool : function() {
@@ -69,6 +76,7 @@ var tinyMapEditor = (function() {
             if (!draw) {
                 if (e.target.id === 'erase' && srcTile) {
                     srcTile = 0;
+                    doc.getElementById('index').innerHTML = -1;
                 } else if (e.target.id === 'tileEditor' && !srcTile) {
                     destTile = this.getTile(e);
                     map.clearRect(destTile.row * tileSize, destTile.col * tileSize, tileSize, tileSize);
